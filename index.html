@@ -5,103 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ao Vivo no YouTube</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin:0; padding:0; box-sizing:border-box; }
         body {
-            height: 100vh;
+            height:100vh;
             background: linear-gradient(135deg, #121212 0%, #1e1e1e 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Roboto', 'Arial', sans-serif;
-            overflow: hidden;
+            display:flex; align-items:center; justify-content:center;
+            font-family:'Roboto',Arial,sans-serif;
+            overflow:hidden;
         }
-
-        .container {
-            text-align: center;
-            padding: 20px;
-        }
-
+        .container { text-align:center; padding:20px; }
         .live-badge {
-            display: inline-block;
-            background: #FF0000;
-            color: white;
-            font-size: 14px;
-            font-weight: 700;
-            padding: 6px 12px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            animation: pulse 2s infinite;
+            display:inline-block; background:#FF0000; color:white;
+            font-size:14px; font-weight:700; padding:6px 12px; border-radius:4px;
+            margin-bottom:20px; text-transform:uppercase; animation:pulse 2s infinite;
         }
-
-        h1 {
-            color: #ffffff;
-            font-size: 2.8rem;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        h1 { color:#fff; font-size:2.8rem; margin-bottom:10px; }
+        p { color:#aaa; font-size:1.2rem; margin-bottom:40px; }
+        .btn {
+            background:#FF0000; color:white; font-size:22px; font-weight:700;
+            text-transform:uppercase; letter-spacing:1px; padding:18px 60px;
+            border:none; border-radius:50px; cursor:pointer;
+            box-shadow:0 10px 30px rgba(255,0,0,.4);
+            transition:all .3s; display:inline-flex; align-items:center; gap:12px;
         }
-
-        p {
-            color: #aaaaaa;
-            font-size: 1.2rem;
-            margin-bottom: 40px;
+        .btn:hover { background:#cc0000; transform:translateY(-4px); box-shadow:0 15px 35px rgba(255,0,0,.5); }
+        .play { width:28px; height:28px;
+            background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>') center/contain no-repeat;
         }
-
-        .btn-youtube {
-            background: #FF0000;
-            color: white;
-            font-size: 22px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: 18px 60px;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.4);
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .btn-youtube:hover {
-            background: #e60000;
-            transform: translateY(-4px);
-            box-shadow: 0 15px 35px rgba(255, 0, 0, 0.5);
-        }
-
-        .btn-youtube:active {
-            transform: translateY(-1px);
-        }
-
-        .play-icon {
-            width: 28px;
-            height: 28px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>') center/contain no-repeat;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.8; }
-            100% { opacity: 1; }
-        }
-
-        /* Responsivo */
-        @media (max-width: 600px) {
-            h1 { font-size: 2.2rem; }
-            p { font-size: 1rem; }
-            .btn-youtube {
-                font-size: 18px;
-                padding: 16px 40px;
-            }
-        }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.8} }
+        @media (max-width:600px){ h1{font-size:2.2rem} .btn{font-size:18px; padding:16px 40px} }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
@@ -112,25 +44,34 @@
         <h1>Transmissão ao Vivo</h1>
         <p>Assista agora no YouTube</p>
 
-        <button onclick="redirecionarYouTube()" class="btn-youtube">
-            <span class="play-icon"></span>
+        <!-- BOTÃO QUE ABRE DIRETO SEM POP-UP -->
+        <a href="https://www.youtube.com/live/Ufd0cYzeaks" 
+           onclick="openYouTube(); return false;" 
+           class="btn">
+            <span class="play"></span>
             ASSISTIR AGORA
-        </button>
+        </a>
     </div>
 
-    <script type="text/javascript">
-        function redirecionarYouTube() {
-            var desktopFallback = "https://www.youtube.com/live/Ufd0cYzeaks",
-                mobileFallback = "https://www.youtube.com/live/Ufd0cYzeaks",
-                app = "youtube://www.youtube.com/live/Ufd0cYzeaks";
+    <script>
+        function openYouTube() {
+            const url = "https://www.youtube.com/live/Ufd0cYzeaks";
             
-            if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                window.location = app;
-                setTimeout(function() {
-                    window.location = mobileFallback;
-                }, 25);
-            } else {
-                window.location = desktopFallback;
+            // Tenta abrir direto no app usando o intent moderno (funciona Android e iOS sem pop-up na maioria dos casos)
+            if (navigator.userAgent.match(/Android/i)) {
+                // Android – Intent universal que abre direto no app
+                window.location = "intent://www.youtube.com/live/Ufd0cYzeaks#Intent;scheme=https;package=com.google.android.youtube;end";
+            } 
+            else if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
+                // iOS 17+ – Universal Link + fallback
+                window.location = "https://www.youtube.com/watch?v=Ufd0cYzeaks&feature=youtu.be";
+                setTimeout(() => {
+                    window.location = "youtube://watch?v=Ufd0cYzeaks";
+                }, 500);
+            } 
+            else {
+                // Desktop
+                window.open(url, "_blank");
             }
         }
     </script>
